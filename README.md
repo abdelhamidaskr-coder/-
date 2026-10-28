@@ -72,3 +72,33 @@
                 <span class="text-slate-500 font-semibold text-xs">المبلغ الإجمالي المطلوب (ر.س)</span>
                 <div class="text-3xl font-extrabold text-amber-600 mt-1" id="dashTotalAmount">0.00 ر.س</div>
             </div>
+        </div>
+
+        <!-- 1. جدول المدارس والكميات (تعديل مباشر في الخانات) -->
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5 overflow-hidden">
+            <div class="mb-3">
+                <h2 class="text-lg font-bold text-emerald-900">📊 جدول كميات المدارس (انقر على أي رقم لتعديله)</h2>
+            </div>
+            <div class="overflow-x-auto max-h-[600px]">
+                <table class="w-full text-xs text-center border-collapse" id="matrixTable">
+                    <thead id="matrixThead" class="sticky top-0 bg-slate-100 text-slate-900 z-10"></thead>
+                    <tbody id="matrixTbody" class="divide-y divide-slate-200"></tbody>
+                    <tfoot id="matrixTfoot" class="sticky bottom-0 bg-slate-100 font-bold border-t-2 border-slate-400 z-10"></tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- 2. جدول أسعار الأصناف والملخص المالي -->
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5">
+            <div class="mb-3">
+                <h2 class="text-lg font-bold text-emerald-900">🏷️ جدول أسعار الأصناف والملخص الإجمالي</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs text-right border-collapse">
+                    <thead>
+                        <tr class="bg-emerald-900 text-white font-bold">
+                            <th class="p-2.5 border text-center w-12">#</th>
+                            <th class="p-2.5 border">اسم الصنف</th>
+                            <th class="p-2.5 border text-center w-36">سعر الوحدة (ر.س)</th>
+                            <th class="p-2.5 border text-center w-36">إجمالي الكمية المطلوبة</th>
+                            <th class="p-2.5 border text
