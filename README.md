@@ -8,9 +8,6 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- SheetJS for Excel Export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
     <!-- Font Arabic Cairo -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 
@@ -65,16 +62,16 @@
             </div>
             
             <div class="flex flex-wrap gap-2 md:gap-3 no-print">
-                <button onclick="addNewSchool()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl shadow transition text-sm flex items-center gap-1">
+                <button id="btnOpenSchoolModal" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-1.5">
                     ➕ إضافة مدرسة جديدة
                 </button>
-                <button onclick="addNewItem()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl shadow transition text-sm flex items-center gap-1">
+                <button id="btnOpenItemModal" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-1.5">
                     🥯 إضافة صنف جديد
                 </button>
-                <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2 rounded-xl shadow transition text-sm flex items-center gap-1">
-                    🖨️ طباعة
+                <button id="btnPrint" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-4 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-1.5">
+                    🖨️ طباعة التقرير
                 </button>
-                <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl shadow transition text-sm flex items-center gap-1">
+                <button id="btnExport" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-1.5">
                     📥 تصدير Excel
                 </button>
             </div>
@@ -119,35 +116,4 @@
                 <table class="w-full text-xs text-center border-collapse" id="matrixTable">
                     <thead id="matrixThead" class="sticky top-0 bg-slate-900 text-white z-10"></thead>
                     <tbody id="matrixTbody" class="divide-y divide-slate-200"></tbody>
-                    <tfoot id="matrixTfoot" class="sticky bottom-0 bg-slate-100 font-bold border-t-2 border-slate-400 z-10"></tfoot>
-                </table>
-            </div>
-        </div>
-
-        <!-- TABLE 2: Prices Summary -->
-        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5 card-box">
-            <div class="flex justify-between items-center mb-3">
-                <div>
-                    <h2 class="text-lg md:text-xl font-bold text-emerald-900 flex items-center gap-2">
-                        <span>🏷️</span> قائمة الأصناف، الأسعار، وإجمالي الكميات
-                    </h2>
-                    <p class="text-xs text-slate-500">يمكنك تعديل أسعار الأصناف هنا مباشرة وسيقوم البرنامج بحساب إجمالي المبالغ تلقائياً.</p>
-                </div>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-xs text-right border-collapse" id="pricesTable">
-                    <thead>
-                        <tr class="bg-emerald-900 text-white font-bold">
-                            <th class="p-2.5 border border-emerald-800 text-center w-12">#</th>
-                            <th class="p-2.5 border border-emerald-800">اسم الصنف</th>
-                            <th class="p-2.5 border border-emerald-800 text-center w-32">سعر الوحدة (ر.س)</th>
-                            <th class="p-2.5 border border-emerald-800 text-center w-32">إجمالي الكمية المطلوبة</th>
-                            <th class="p-2.5 border border-emerald-800 text-center w-40">الإجمالي المالي (ر.س)</th>
-                            <th class="p-2.5 border border-emerald-800 text-center w-20 no-print">حذف</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pricesTbody" class="divide-y divide-slate-200"></tbody>
-                    <tfoot>
-                        <tr class="bg-emerald-100 font-extrabold text-emerald-950 text-sm">
-                            <td colspan="3" class="p-3 border border-emerald-300 text-left pl-4">الإجمالي الكلي لجميع
+                    <tfoot id="matrixTfoot" class="sticky bottom-0 bg-
