@@ -81,7 +81,7 @@
             </div>
             <div class="overflow-x-auto max-h-[600px]">
                 <table class="w-full text-xs text-center border-collapse" id="matrixTable">
-                    <thead id="matrixThead" class="sticky top-0 bg-slate-900 text-white z-10"></thead>
+                    <thead id="matrixThead" class="sticky top-0 bg-slate-100 text-slate-950 z-10"></thead>
                     <tbody id="matrixTbody" class="divide-y divide-slate-200"></tbody>
                     <tfoot id="matrixTfoot" class="sticky bottom-0 bg-slate-100 font-bold border-t-2 border-slate-400 z-10"></tfoot>
                 </table>
@@ -91,7 +91,7 @@
         <!-- 2. جدول أسعار الأصناف والملخص المالي -->
         <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5">
             <div class="mb-3">
-                <h2 class="text-lg font-bold text-emerald-900">🏷️ جدول أسعار الأصناف والملخص الإجمالي (حسب الصورة المرفقة)</h2>
+                <h2 class="text-lg font-bold text-emerald-900">🏷️ جدول أسعار الأصناف والملخص الإجمالي</h2>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-xs text-right border-collapse">
@@ -119,7 +119,6 @@
     </div>
 
     <script>
-        // الأصناف والأسعار الثابتة (مطابقة للصورة تماماً)
         const items = [
             { id: "i1", name: "زعتر", price: 1.25 },
             { id: "i2", name: "زعتر بالفرن", price: 2.50 },
@@ -149,7 +148,6 @@
             { id: "i26", name: "ميني كب كيك", price: 15.00 }
         ];
 
-        // المدارس الثابتة بطلبياتها الأولية
         const schools = [
             { name: "مدرسة التعلم الأهلية (بنات)", items: {"زعتر": 5, "دونات": 5, "بيتزا": 5, "جبنة": 5, "لبنة": 5} },
             { name: "مدرسة رويال", items: {"جبنة": 5, "لبنة": 4, "زعتر": 5, "بيتزا": 4, "كرواسون زبدة": 3, "كيك أرامكو": 5} },
@@ -187,11 +185,11 @@
             const tbody = document.getElementById('matrixTbody');
             const tfoot = document.getElementById('matrixTfoot');
 
-            let headHTML = `<tr><th class="p-2 border border-slate-700 w-8">#</th><th class="p-2 border border-slate-700 text-right min-w-[150px]">اسم الصنف / المدرسة</th>`;
+            let headHTML = `<tr><th class="p-2 border border-slate-300 w-8 bg-slate-200 text-slate-950 font-black">#</th><th class="p-2 border border-slate-300 text-right min-w-[150px] bg-slate-200 text-slate-950 font-black">اسم الصنف / المدرسة</th>`;
             schools.forEach((s) => {
-                headHTML += `<th class="p-2 border border-slate-700 min-w-[95px] text-xs font-bold">${s.name}</th>`;
+                headHTML += `<th class="p-2 border border-slate-300 min-w-[95px] text-xs font-black bg-slate-100 text-slate-950">${s.name}</th>`;
             });
-            headHTML += `<th class="p-2 border border-slate-700 w-24 bg-emerald-800 text-white">إجمالي الحبات</th><th class="p-2 border border-slate-700 w-28 bg-emerald-950 text-amber-300">الإجمالي (ر.س)</th></tr>`;
+            headHTML += `<th class="p-2 border border-slate-300 w-24 bg-emerald-800 text-white font-black">إجمالي الحبات</th><th class="p-2 border border-slate-300 w-28 bg-emerald-950 text-amber-300 font-black">الإجمالي (ر.س)</th></tr>`;
             thead.innerHTML = headHTML;
 
             tbody.innerHTML = '';
@@ -240,7 +238,7 @@
             
             let footAmtHTML = `<tr class="bg-emerald-950 text-white font-extrabold"><td colspan="2" class="p-2.5 border text-right">مجموع مبلغ المدرسة (ر.س):</td>`;
             schoolTotalsAmt.forEach(amt => { footAmtHTML += `<td class="p-2 border text-center text-amber-300">${amt.toFixed(2)}</td>`; });
-            footAmtHTML += `<td class="p-2 border text-center bg-amber-500 text-slate-950">${totalAllQty}</td><td class="p-2 border text-center bg-amber-400 text-slate-950">${totalAllAmt.toFixed(2)}</td></tr>`;
+            footAmtHTML += `<td class="p-2 border text-center bg-amber-500 text-slate-950">${totalAllQty}</td><td class="p-2 border text-center bg-amber-400 text-slate-950">${totalAllQty}</td></tr>`;
 
             tfoot.innerHTML = footQtyHTML + footAmtHTML;
         }
