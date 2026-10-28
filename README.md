@@ -14,34 +14,58 @@
             body { background-color: #ffffff; padding: 0; }
             input { border: none !important; background: transparent !important; }
         }
-        .qty-input:focus { background-color: #fef08a !important; outline: 2px solid #ca8a04 !important; }
+        .qty-box {
+            width: 100%;
+            text-align: center;
+            font-weight: 700;
+            padding: 4px 2px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .qty-box:hover {
+            border-color: #94a3b8;
+            background-color: #f1f5f9;
+        }
+        .qty-box:focus {
+            background-color: #fef08a !important;
+            border-color: #ca8a04 !important;
+            outline: none;
+        }
+        .has-qty {
+            background-color: #ecfdf5;
+            color: #065f46;
+            font-weight: 800;
+        }
     </style>
 </head>
-<body class="p-4 md:p-6">
+<body class="p-3 md:p-6">
 
     <div class="max-w-[1600px] mx-auto space-y-6">
         
-        <!-- الهيدر والأزرار الأساسية -->
-        <div class="bg-emerald-900 text-white rounded-2xl p-6 shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
+        <!-- الهيدر والأزرار -->
+        <div class="bg-emerald-900 text-white rounded-2xl p-5 shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
             <div>
-                <h1 class="text-2xl font-extrabold">🥐 جدول طلبيات المدارس الموحد</h1>
-                <p class="text-emerald-200 text-sm mt-1">تعديل مباشر للأعداد والأسعار مع حساب الإجمالي تلقائياً</p>
+                <h1 class="text-2xl font-extrabold flex items-center gap-2">
+                    <span>🥐</span> جدول طلبيات المدارس التفاعلي
+                </h1>
+                <p class="text-emerald-200 text-xs md:text-sm mt-1">المدارس والأصناف ثابتة - يمكنك تعديل أي عدد أو سعر مباشرة داخل الخانات وسيتم تحديث الحساب فوراً</p>
             </div>
             
             <div class="flex gap-3 no-print">
-                <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2.5 rounded-xl shadow transition text-sm">
-                    🖨️ طباعة التقرير
+                <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold px-5 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-1.5">
+                    🖨️ طباعة
                 </button>
-                <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl shadow transition text-sm">
-                    📥 تصدير إلى Excel
+                <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-1.5">
+                    📥 تصدير Excel
                 </button>
             </div>
         </div>
 
-        <!-- بطاقات الملخص -->
+        <!-- بطاقات المجموع الإجمالي -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-r-8 border-r-emerald-700">
-                <span class="text-slate-500 font-semibold text-xs">إجمالي القطع المطلوبة</span>
+                <span class="text-slate-500 font-semibold text-xs">إجمالي عدد القطع المطلوبة (حبة)</span>
                 <div class="text-3xl font-extrabold text-emerald-900 mt-1" id="dashTotalQty">0</div>
             </div>
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-r-8 border-r-amber-500">
@@ -50,11 +74,13 @@
             </div>
         </div>
 
-        <!-- 1. جدول الطلبيات الشامل (المدارس والأعداد) -->
+        <!-- 1. جدول المدارس والكميات (تعديل مباشر في الخانات) -->
         <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5 overflow-hidden">
-            <h2 class="text-lg font-bold text-emerald-900 mb-3">📊 جدول المدارس والكميات (غير الأعداد داخل الخانات مباشرة)</h2>
+            <div class="mb-3">
+                <h2 class="text-lg font-bold text-emerald-900">📊 جدول كميات المدارس (انقر على أي رقم لتعديله)</h2>
+            </div>
             <div class="overflow-x-auto max-h-[600px]">
-                <table class="w-full text-xs text-center border-collapse">
+                <table class="w-full text-xs text-center border-collapse" id="matrixTable">
                     <thead id="matrixThead" class="sticky top-0 bg-slate-900 text-white z-10"></thead>
                     <tbody id="matrixTbody" class="divide-y divide-slate-200"></tbody>
                     <tfoot id="matrixTfoot" class="sticky bottom-0 bg-slate-100 font-bold border-t-2 border-slate-400 z-10"></tfoot>
@@ -62,9 +88,11 @@
             </div>
         </div>
 
-        <!-- 2. جدول الأسعار والتكاليف -->
+        <!-- 2. جدول أسعار الأصناف والملخص المالي -->
         <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-5">
-            <h2 class="text-lg font-bold text-emerald-900 mb-3">🏷️ جدول أسعار الأصناف والملخص الإجمالي</h2>
+            <div class="mb-3">
+                <h2 class="text-lg font-bold text-emerald-900">🏷️ جدول أسعار الأصناف والملخص الإجمالي (حسب الصورة المرفقة)</h2>
+            </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-xs text-right border-collapse">
                     <thead>
@@ -72,8 +100,8 @@
                             <th class="p-2.5 border text-center w-12">#</th>
                             <th class="p-2.5 border">اسم الصنف</th>
                             <th class="p-2.5 border text-center w-36">سعر الوحدة (ر.س)</th>
-                            <th class="p-2.5 border text-center w-36">إجمالي الكمية</th>
-                            <th class="p-2.5 border text-center w-40">الإجمالي المالي (ر.س)</th>
+                            <th class="p-2.5 border text-center w-36">إجمالي الكمية المطلوبة</th>
+                            <th class="p-2.5 border text-center w-40">المبلغ الإجمالي (ر.س)</th>
                         </tr>
                     </thead>
                     <tbody id="pricesTbody" class="divide-y divide-slate-200"></tbody>
@@ -91,7 +119,7 @@
     </div>
 
     <script>
-        // الأصناف والأسعار الثابتة
+        // الأصناف والأسعار الثابتة (مطابقة للصورة تماماً)
         const items = [
             { id: "i1", name: "زعتر", price: 1.25 },
             { id: "i2", name: "زعتر بالفرن", price: 2.50 },
@@ -121,7 +149,7 @@
             { id: "i26", name: "ميني كب كيك", price: 15.00 }
         ];
 
-        // المدارس والكميات الأولية الثابتة
+        // المدارس الثابتة بطلبياتها الأولية
         const schools = [
             { name: "مدرسة التعلم الأهلية (بنات)", items: {"زعتر": 5, "دونات": 5, "بيتزا": 5, "جبنة": 5, "لبنة": 5} },
             { name: "مدرسة رويال", items: {"جبنة": 5, "لبنة": 4, "زعتر": 5, "بيتزا": 4, "كرواسون زبدة": 3, "كيك أرامكو": 5} },
@@ -136,7 +164,7 @@
             { name: "مدارس السلام (بنات)", items: {"جبنة": 10, "لبنة": 10, "بيتزا": 8, "كرواسون زبدة": 40, "كيك أرامكو": 15, "دونات": 4, "سبانخ": 10, "سويت رول": 10} },
             { name: "السلام ابتدائي بنين (د1)", items: {"جبنة عكاوي": 6, "زعتر": 4, "لبنة": 4, "بيتزا": 3, "كرواسون زبدة": 4} },
             { name: "السلام متوسط (بنين)", items: {"جبنة عكاوي": 15, "لبنة": 5, "جبنة": 5, "كرواسون": 5, "زعتر": 5, "دونات": 2, "سويت رول": 3} },
-            { id: "s14", name: "السلام ابتدائي (د2)", items: {"بيتزا": 4, "دونات": 3, "سويت رول": 3, "جبنة": 4, "لبنة": 3, "زعتر": 3, "جبن بالفرن": 1} },
+            { name: "السلام ابتدائي (د2)", items: {"بيتزا": 4, "دونات": 3, "سويت رول": 3, "جبنة": 4, "لبنة": 3, "زعتر": 3, "جبن بالفرن": 1} },
             { name: "السلام ثانوية (بنين)", items: {"لبنة": 10, "زعتر": 10, "جبنة": 5, "دونات": 5, "كرواسون": 10, "جبنة عكاوي": 15} },
             { name: "الكفاح (بنين)", items: {"جبن بالفرن": 8, "زعتر": 2} },
             { name: "الكفاح (بنات)", items: {"مناقيش زعتر": 5, "مناقيش جبن": 4, "كرواسون زعتر": 4} },
@@ -159,8 +187,10 @@
             const tbody = document.getElementById('matrixTbody');
             const tfoot = document.getElementById('matrixTfoot');
 
-            let headHTML = `<tr><th class="p-2 border border-slate-700 w-8">#</th><th class="p-2 border border-slate-700 text-right min-w-[150px]">الصنف / المدرسة</th>`;
-            schools.forEach((s) => { headHTML += `<th class="p-2 border border-slate-700 min-w-[100px] text-xs">${s.name}</th>`; });
+            let headHTML = `<tr><th class="p-2 border border-slate-700 w-8">#</th><th class="p-2 border border-slate-700 text-right min-w-[150px]">اسم الصنف / المدرسة</th>`;
+            schools.forEach((s) => {
+                headHTML += `<th class="p-2 border border-slate-700 min-w-[95px] text-xs font-bold">${s.name}</th>`;
+            });
             headHTML += `<th class="p-2 border border-slate-700 w-24 bg-emerald-800 text-white">إجمالي الحبات</th><th class="p-2 border border-slate-700 w-28 bg-emerald-950 text-amber-300">الإجمالي (ر.س)</th></tr>`;
             thead.innerHTML = headHTML;
 
@@ -168,17 +198,25 @@
             items.forEach((item, idx) => {
                 let rowQty = 0;
                 let rowHTML = `<tr class="${idx % 2 === 0 ? 'bg-slate-50' : 'bg-white'}"><td class="p-2 border font-bold text-slate-400">${idx + 1}</td><td class="p-2 border font-bold text-right text-slate-800">${item.name}</td>`;
+                
                 schools.forEach((s, sIdx) => {
                     const q = s.items[item.name] || 0;
                     rowQty += q;
-                    rowHTML += `<td class="p-1 border"><input type="number" min="0" value="${q > 0 ? q : ''}" placeholder="-" onchange="updateQty(${sIdx}, '${item.name}', this.value)" class="qty-input w-full text-center font-bold text-xs p-1 rounded ${q > 0 ? 'text-emerald-900 font-bold bg-emerald-50' : 'text-slate-300'}"></td>`;
+                    rowHTML += `<td class="p-1 border">
+                        <input type="number" min="0" value="${q > 0 ? q : ''}" placeholder="-" 
+                            onchange="updateQty(${sIdx}, '${item.name}', this.value)" 
+                            class="qty-box ${q > 0 ? 'has-qty' : 'text-slate-300'}">
+                    </td>`;
                 });
-                rowHTML += `<td class="p-2 border font-extrabold bg-slate-100">${rowQty}</td><td class="p-2 border font-extrabold text-emerald-800 bg-emerald-100">${(rowQty * item.price).toFixed(2)}</td></tr>`;
+
+                const rowAmt = rowQty * item.price;
+                rowHTML += `<td class="p-2 border font-extrabold bg-slate-100">${rowQty}</td><td class="p-2 border font-extrabold text-emerald-800 bg-emerald-100">${rowAmt.toFixed(2)}</td></tr>`;
                 tbody.innerHTML += rowHTML;
             });
 
             let footQtyHTML = `<tr class="bg-slate-200 font-bold text-slate-800"><td colspan="2" class="p-2.5 border text-right">مجموع حبات المدرسة:</td>`;
             let schoolTotalsAmt = new Array(schools.length).fill(0);
+
             schools.forEach((s, sIdx) => {
                 let sqty = 0, samt = 0;
                 items.forEach(i => {
@@ -191,7 +229,11 @@
 
             let totalAllQty = 0, totalAllAmt = 0;
             schools.forEach(s => {
-                items.forEach(i => { totalAllQty += (s.items[i.name] || 0); totalAllAmt += (s.items[i.name] || 0) * i.price; });
+                items.forEach(i => {
+                    const q = s.items[i.name] || 0;
+                    totalAllQty += q;
+                    totalAllAmt += q * i.price;
+                });
             });
 
             footQtyHTML += `<td class="p-2 border text-center bg-slate-300 text-slate-950 font-extrabold">${totalAllQty}</td><td class="p-2 border text-center bg-emerald-200 text-emerald-950 font-extrabold">${totalAllAmt.toFixed(2)}</td></tr>`;
@@ -216,7 +258,9 @@
                 tbody.innerHTML += `<tr class="${idx % 2 === 0 ? 'bg-slate-50' : 'bg-white'}">
                     <td class="p-2 border text-center font-bold text-slate-400">${idx + 1}</td>
                     <td class="p-2 border font-bold text-slate-800">${item.name}</td>
-                    <td class="p-2 border text-center"><input type="number" step="0.25" value="${item.price}" onchange="updatePrice('${item.id}', this.value)" class="w-24 text-center border rounded font-bold text-emerald-800 p-1"></td>
+                    <td class="p-2 border text-center">
+                        <input type="number" step="0.25" value="${item.price}" onchange="updatePrice('${item.id}', this.value)" class="w-24 text-center border rounded font-bold text-emerald-800 p-1 focus:bg-amber-100 focus:outline-none">
+                    </td>
                     <td class="p-2 border text-center font-bold text-slate-700">${qty}</td>
                     <td class="p-2 border text-center font-bold text-emerald-700">${amt.toFixed(2)} ر.س</td>
                 </tr>`;
@@ -254,7 +298,8 @@
 
         function exportToExcel() {
             const wb = XLSX.utils.book_new();
-            const pricesData = [["قائمة الأسعار والملخص"], [], ["#", "اسم الصنف", "سعر الوحدة", "الكمية", "الإجمالي"]];
+            
+            const pricesData = [["قائمة الأسعار والملخص العام"], [], ["#", "اسم الصنف", "سعر الوحدة (ر.س)", "إجمالي الكمية", "الإجمالي المالي (ر.س)"]];
             let gQty = 0, gAmt = 0;
             items.forEach((i, idx) => {
                 const q = getItemTotalQty(i.name), a = q * i.price;
@@ -268,7 +313,7 @@
             schools.forEach(s => matrixHead.push(s.name));
             matrixHead.push("إجمالي الحبات", "الإجمالي (ر.س)");
 
-            const matrixData = [["جدول الطلبيات الشامل"], [], matrixHead];
+            const matrixData = [["جدول الطلبيات الشامل (المدارس × الأصناف)"], [], matrixHead];
             items.forEach((i, idx) => {
                 const row = [idx + 1, i.name];
                 let rq = 0;
@@ -280,7 +325,7 @@
                 matrixData.push(row);
             });
 
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(matrixData), "الطلبيات الشاملة");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(matrixData), "جدول الطلبيات الشامل");
             XLSX.writeFile(wb, "طلبيات_المدارس.xlsx");
         }
 
